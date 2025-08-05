@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 from reportlab.pdfgen import canvas
-#blank
+
 from reportlab.lib.pagesizes import landscape
 from reportlab.pdfbase import pdfmetrics 
 from reportlab.pdfbase.ttfonts import TTFont 
@@ -9,14 +9,12 @@ from reportlab.lib.units import mm
 from reportlab.graphics.barcode import code128
 from reportlab.graphics.shapes import Drawing
 from reportlab.graphics import renderPDF
-# blank
+
 from io import BytesIO
 import base64
 import os
 
 # Set label size (width=80mm, height=30mm)
-#LABEL_WIDTH = 80 * mm
-#LABEL_HEIGHT = 30 * mm
 
 # Label size in mm
 LABEL_WIDTH_MM = 80
@@ -90,9 +88,11 @@ if uploaded_file:
             text_width = pdfmetrics.stringWidth(f"₹{mrp}", "Unicode", 15)
             mrp_x = NAME_COL_WIDTH + 1 * mm
             mrp_y = ROW2_Y
+
             # Draw line over the text for strike-through
             #c.setLineWidth(1)
             #c.line(mrp_x, mrp_y + 5, mrp_x + text_width, mrp_y + 5)
+            
             # Draw cross lines
             c.setLineWidth(2)
             text_height = 12  # Approximate text height in points (1 pt = 1/72 inch)
@@ -123,32 +123,8 @@ if uploaded_file:
             c.setFont("Helvetica", 8)
             c.drawCentredString(LABEL_WIDTH / 2, 2 * mm, barcode_text)
 
-            """ 
-            # Row 1: English name, MRP/SP labels
-            c.setFont("Helvetica-Bold", 20)
-            c.drawString(10, LABEL_HEIGHT - 20, item_name)
-            c.setFont("Helvetica", 8)
-            c.drawString(55, LABEL_HEIGHT - 10, "MRP")
-            c.drawString(75, LABEL_HEIGHT - 10, "SP")
-
-            # Row 2: Tamil name, price values
-            #c.setFont("Helvetica", 9)
-            c.setFont("Tamil", 10)
-            c.drawString(5, LABEL_HEIGHT - 20, tamil_name)
-            c.setFont("Helvetica-Bold", 12)
-            c.drawString(55, LABEL_HEIGHT - 20, f"₹{mrp}")
-            c.drawString(65, LABEL_HEIGHT - 20, f"₹{sp}")
-
-            # Row 3: Barcode image + number
-            barcode = code128.Code128(barcode_text, barHeight=10*mm, barWidth=0.4)
-            drawing = Drawing(60, 15)
-            barcode.drawOn(c, x=2*mm, y=2*mm)
-            #drawing.add(barcode)
-            renderPDF.draw(drawing, c, 10, 5)
-
-            c.setFont("Helvetica", 8)
-            c.drawCentredString(LABEL_WIDTH / 2, 2, barcode_text)""" 
-        c.showPage()
+             
+            c.showPage()
 
         c.save()
         buffer.seek(0)
@@ -160,12 +136,12 @@ if uploaded_file:
 
         # Download button
         st.download_button("Download Labels PDF", data=buffer, file_name="labels.pdf", mime="application/pdf")
-        """
+        
         # Print Button (browser print)
         st.markdown("""
-            #<button onclick="window.print()" style="margin-top: 20px; padding: 10px 20px; font-size: 16px;">
-            #    🖨️ Print Label
-            #</button>
+            <button onclick="window.print()" style="margin-top: 20px; padding: 10px 20px; font-size: 16px;">
+                🖨️ Print Label
+            </button>
     """, unsafe_allow_html=True)
 
         # Optional: Local printer (Windows only)
@@ -178,6 +154,6 @@ if uploaded_file:
                 win32api.ShellExecute(0, "print", "temp_label.pdf", None, ".", 0)
                 st.success("Sent to printer.")
             except Exception as e:
-                st.error(f"Print failed: {e}")"""
+                st.error(f"Print failed: {e}")
 else: 
     st.info("Please upload an Excel file with columns: Item Name, Tamil, MRP, SP, Barcode")  
